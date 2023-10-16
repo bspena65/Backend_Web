@@ -53,6 +53,11 @@ public class Category {
 		this.imageUrl = imageUrl;
 	}
 
+	public Category() {
+		// Constructor sin argumentos
+	}
+
+
 	/**
 	 * Obtiene el identificador único de la categoría.
 	 *
