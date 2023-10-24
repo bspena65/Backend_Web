@@ -181,7 +181,7 @@ public class UserService {
      * @return `true` si el usuario tiene permisos para realizar operaciones CRUD en usuarios, `false` en caso contrario.
      */
     boolean canCrudUser(Role role) {
-        if (role == Role.admin || role == Role.manager) {
+        if (role == Role.admin) {
             return true;
         }
         return false;
@@ -196,11 +196,9 @@ public class UserService {
      */
     boolean canCrudUser(User userUpdating, Integer userIdBeingUpdated) {
         Role role = userUpdating.getRole();
-        // admin and manager can crud any user
-        if (role == Role.admin || role == Role.manager) {
+        if (role == Role.admin ) {
             return true;
         }
-        // user can update his own record, but not his role
         if (role == Role.user && userUpdating.getId() == userIdBeingUpdated) {
             return true;
         }
