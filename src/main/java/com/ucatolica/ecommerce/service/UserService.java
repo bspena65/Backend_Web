@@ -65,7 +65,7 @@ public class UserService {
         }
 
 
-        User user = new User(signupDto.getFirstName(), signupDto.getLastName(), signupDto.getEmail(), Role.user, encryptedPassword );
+        User user = new User(signupDto.getName(), signupDto.getLastName(), signupDto.getEmail(), Role.user, encryptedPassword );
 
         User createdUser;
         try {
@@ -160,7 +160,7 @@ public class UserService {
             logger.error("hashing password failed {}", e.getMessage());
         }
 
-        User user = new User(userCreateDto.getFirstName(), userCreateDto.getLastName(), userCreateDto.getEmail(), userCreateDto.getRole(), encryptedPassword );
+        User user = new User(userCreateDto.getName(), userCreateDto.getLastName(), userCreateDto.getEmail(), userCreateDto.getRole(), encryptedPassword );
         User createdUser;
         try {
             createdUser = userRepository.save(user);
@@ -196,9 +196,11 @@ public class UserService {
      */
     boolean canCrudUser(User userUpdating, Integer userIdBeingUpdated) {
         Role role = userUpdating.getRole();
-        if (role == Role.admin ) {
+        // admin and manager can crud any user
+        if (role == Role.admin) {
             return true;
         }
+        // user can update his own record, but not his role
         if (role == Role.user && userUpdating.getId() == userIdBeingUpdated) {
             return true;
         }
@@ -213,43 +215,35 @@ public class UserService {
      * @return Un objeto ResponseDto que indica el resultado de la actualización del usuario.
      * @throws CustomException Si ocurre un error durante la actualización del usuario.
      */
-    public ResponseDto updateUser(String userIdString, UserUpdateDto userUpdateDto) throws CustomException {
-        try {
-            // Intenta convertir el userIdString a Integer
-            Integer userId = Integer.parseInt(userIdString);
+    public ResponseDto updateUser(Integer userId, UserUpdateDto userUpdateDto) throws CustomException {
+        // Intenta buscar al usuario que se va a actualizar por su ID
+        Optional<User> optionalUser = userRepository.findById(userId);
 
-            // Intenta buscar al usuario que se va a actualizar por su ID
-            Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            // El usuario fue encontrado, ahora puedes actualizar sus datos
+            User existingUser = optionalUser.get();
 
-            if (optionalUser.isPresent()) {
-                // El usuario fue encontrado, ahora puedes actualizar sus datos
-                User existingUser = optionalUser.get();
+            // Actualiza los campos necesarios del usuario con los valores de userUpdateDto
+            existingUser.setName(userUpdateDto.getName());
+            existingUser.setLastName(userUpdateDto.getLastName());
+            existingUser.setRole(userUpdateDto.getRole());
 
-                // Actualiza los campos necesarios del usuario con los valores de userUpdateDto
-                existingUser.setFirstName(userUpdateDto.getFirstName());
-                existingUser.setLastName(userUpdateDto.getLastName());
+            // Si hay otros campos que necesitas actualizar, hazlo aquí
 
-                // Si hay otros campos que necesitas actualizar, hazlo aquí
-
-                // Luego, guarda el usuario actualizado en la base de datos
-                try {
-                    userRepository.save(existingUser);
-                    // Devuelve un ResponseDto de éxito si la actualización se realiza con éxito
-                    return new ResponseDto(ResponseStatus.success.toString(), "Usuario actualizado exitosamente");
-                } catch (Exception e) {
-                    // Maneja cualquier excepción que pueda ocurrir al guardar el usuario actualizado
-                    throw new CustomException("Error al actualizar el usuario: " + e.getMessage());
-                }
-            } else {
-                // El usuario no fue encontrado, puedes manejar esta situación como desees
-                throw new CustomException("Usuario no encontrado");
+            // Luego, guarda el usuario actualizado en la base de datos
+            try {
+                userRepository.save(existingUser);
+                // Devuelve un ResponseDto de éxito si la actualización se realiza con éxito
+                return new ResponseDto(ResponseStatus.success.toString(), "Usuario actualizado exitosamente");
+            } catch (Exception e) {
+                // Maneja cualquier excepción que pueda ocurrir al guardar el usuario actualizado
+                throw new CustomException("Error al actualizar el usuario: " + e.getMessage());
             }
-        } catch (NumberFormatException e) {
-            // Maneja el caso en que userIdString no sea un entero válido
-            throw new CustomException("El identificador del usuario no es válido.");
+        } else {
+            // El usuario no fue encontrado, puedes manejar esta situación como desees
+            throw new CustomException("Usuario no encontrado");
         }
     }
-
 
 
 

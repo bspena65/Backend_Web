@@ -76,10 +76,11 @@ public class UserController {
      * @return Un objeto ResponseDto con la respuesta de actualización del usuario.
      */
     @PostMapping("/updateUser")
-    public ResponseDto updateUser(@RequestParam("token") String token, @RequestBody UserUpdateDto userUpdateDto) {
+    public ResponseDto updateUser(@RequestParam("token") String token, @RequestParam("userId") Integer userId, @RequestBody UserUpdateDto userUpdateDto) {
         authenticationService.authenticate(token);
-        return userService.updateUser(token, userUpdateDto);
+        return userService.updateUser(userId, userUpdateDto);
     }
+
 
     /**
      * Crea un nuevo usuario.

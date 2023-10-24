@@ -59,17 +59,17 @@ public class User {
      *
      * @return El primer nombre del usuario.
      */
-    public String getFirstName() {
+    public String getName() {
         return name;
     }
 
     /**
      * Establece el primer nombre del usuario.
      *
-     * @param firstName El primer nombre del usuario.
+     * @param name El primer nombre del usuario.
      */
-    public void setFirstName(String firstName) {
-        this.name = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

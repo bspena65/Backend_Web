@@ -8,7 +8,7 @@ import com.ucatolica.ecommerce.enums.Role;
 public class UserUpdateDto {
     // Se omite la actualización de la contraseña por ahora
     private Integer id;
-    private String firstName;
+    private String name;
     private String lastName;
     private Role role;
 
@@ -35,17 +35,17 @@ public class UserUpdateDto {
      *
      * @return El nombre del usuario.
      */
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
     /**
      * Establece el nombre del usuario.
      *
-     * @param firstName El nombre del usuario.
+     * @param name El nombre del usuario.
      */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

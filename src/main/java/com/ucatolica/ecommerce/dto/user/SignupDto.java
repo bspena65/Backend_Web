@@ -14,17 +14,17 @@ public class SignupDto {
      *
      * @return El nombre del usuario.
      */
-    public String getFirstName() {
+    public String getName() {
         return name;
     }
 
     /**
      * Establece el nombre del usuario.
      *
-     * @param firstName El nombre del usuario.
+     * @param name El nombre del usuario.
      */
-    public void setFirstName(String firstName) {
-        this.name = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

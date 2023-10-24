@@ -6,7 +6,7 @@ import com.ucatolica.ecommerce.enums.Role;
  * DTO que representa los datos para crear un nuevo usuario.
  */
 public class UserCreateDto {
-    private String firstName;
+    private String name;
     private String lastName;
     private String email;
     private Role role;
@@ -17,17 +17,17 @@ public class UserCreateDto {
      *
      * @return El nombre del usuario.
      */
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
     /**
      * Establece el nombre del usuario.
      *
-     * @param firstName El nombre del usuario.
+     * @param name El nombre del usuario.
      */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
