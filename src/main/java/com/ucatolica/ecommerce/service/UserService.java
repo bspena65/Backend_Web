@@ -210,7 +210,6 @@ public class UserService {
     /**
      * Actualiza los datos de un usuario en el sistema.
      *
-     * @param userIdString  El ID del usuario a actualizar en formato de cadena.
      * @param userUpdateDto El DTO que contiene los datos actualizados del usuario.
      * @return Un objeto ResponseDto que indica el resultado de la actualización del usuario.
      * @throws CustomException Si ocurre un error durante la actualización del usuario.
