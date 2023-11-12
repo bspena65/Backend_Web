@@ -22,6 +22,7 @@ public class Product {
     private @NotNull double price;
     private @NotNull String description;
 
+    private @NotNull Integer quantity;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
@@ -179,6 +180,14 @@ public class Product {
      */
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     @Override

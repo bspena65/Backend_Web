@@ -16,6 +16,9 @@ public class ProductDto {
     private @NotNull String description;
     private @NotNull Integer categoryId;
 
+    private @NotNull Integer quantity;
+
+
     /**
      * Constructor de la clase `ProductDto` que crea un DTO a partir de un objeto `Product`.
      *
@@ -28,6 +31,7 @@ public class ProductDto {
         this.setDescription(product.getDescription());
         this.setPrice(product.getPrice());
         this.setCategoryId(product.getCategory().getId());
+        this.quantity = product.getQuantity();
     }
 
     /**
@@ -159,5 +163,13 @@ public class ProductDto {
      */
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

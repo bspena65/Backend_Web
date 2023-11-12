@@ -56,6 +56,7 @@ public class ProductService {
      */
     public static Product getProductFromDto(ProductDto productDto, Category category) {
         Product product = new Product(productDto, category);
+        product.setQuantity(productDto.getQuantity());
         return product;
     }
 
