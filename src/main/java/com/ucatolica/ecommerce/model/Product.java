@@ -23,6 +23,7 @@ public class Product {
     private @NotNull String description;
 
     private @NotNull Integer quantity;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
@@ -48,6 +49,8 @@ public class Product {
         this.description = productDto.getDescription();
         this.price = productDto.getPrice();
         this.category = category;
+        this.quantity = getQuantity();
+
     }
 
     /**
@@ -59,13 +62,14 @@ public class Product {
      * @param description La descripción del producto.
      * @param category    La categoría a la que pertenece el producto.
      */
-    public Product(String name, String imageURL, double price, String description, Category category) {
+    public Product(String name, String imageURL, double price, String description, Category category, Integer quantity) {
         super();
         this.name = name;
         this.imageURL = imageURL;
         this.price = price;
         this.description = description;
         this.category = category;
+        this.quantity = quantity;
     }
 
     /**
