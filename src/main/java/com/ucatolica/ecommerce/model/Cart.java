@@ -45,6 +45,10 @@ public class Cart {
         this.createdDate = new Date();
     }
 
+    public Cart() {
+
+    }
+
     /**
      * Obtiene el identificador único del carrito.
      *
