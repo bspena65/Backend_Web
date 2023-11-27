@@ -10,9 +10,11 @@ import com.ucatolica.ecommerce.dto.checkout.CheckoutItemDto;
 import com.ucatolica.ecommerce.exceptions.OrderNotFoundException;
 import com.ucatolica.ecommerce.model.Order;
 import com.ucatolica.ecommerce.model.OrderItem;
+import com.ucatolica.ecommerce.model.Product;
 import com.ucatolica.ecommerce.model.User;
 import com.ucatolica.ecommerce.repository.OrderItemsRepository;
 import com.ucatolica.ecommerce.repository.OrderRepository;
+import com.ucatolica.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,9 @@ public class OrderService {
 
     @Autowired
     OrderItemsRepository orderItemsRepository;
+
+    @Autowired
+    ProductRepository productRepository;
 
     @Value("${BASE_URL}")
     private String baseURL;
@@ -114,20 +119,19 @@ public class OrderService {
                 .build();
         return Session.create(params);
     }
-
     /**
      * Coloca un pedido en nombre del usuario, guardando los detalles del pedido y eliminando los productos del carrito.
      *
      * @param user     El usuario que realiza el pedido.
      * @param sessionId El ID de la sesión de pago de Stripe asociada al pedido.
+
      */
+
     public void placeOrder(User user, String sessionId) {
-        // first let get cart items for the user
+        // Obtener los artículos del carrito del usuario
         CartDto cartDto = cartService.listCartItems(user);
 
-        List<CartItemDto> cartItemDtoList = cartDto.getcartItems();
-
-        // create the order and save it
+        // Crear un nuevo pedido
         Order newOrder = new Order();
         newOrder.setCreatedDate(new Date());
         newOrder.setSessionId(sessionId);
@@ -135,18 +139,24 @@ public class OrderService {
         newOrder.setTotalPrice(cartDto.getTotalCost());
         orderRepository.save(newOrder);
 
-        for (CartItemDto cartItemDto : cartItemDtoList) {
-            // create orderItem and save each one
+        // Procesar cada artículo del carrito
+        for (CartItemDto cartItemDto : cartDto.getcartItems()) {
             OrderItem orderItem = new OrderItem();
             orderItem.setCreatedDate(new Date());
             orderItem.setPrice(cartItemDto.getProduct().getPrice());
             orderItem.setProduct(cartItemDto.getProduct());
             orderItem.setQuantity(cartItemDto.getQuantity());
             orderItem.setOrder(newOrder);
-            // add to order item list
             orderItemsRepository.save(orderItem);
+
+            // Actualizar el inventario del producto
+            Product product = cartItemDto.getProduct();
+            int newQuantity = product.getQuantity() - cartItemDto.getQuantity();
+            product.setQuantity(Math.max(newQuantity, 0)); // Asegurar que la cantidad no sea negativa
+            productRepository.save(product);
         }
-        //
+
+        // Eliminar los artículos del carrito
         cartService.deleteUserCartItems(user);
     }
 
