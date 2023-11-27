@@ -25,6 +25,9 @@ public class WishList {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    public WishList() {
+    }
+
     /**
      * Crea una nueva instancia de `WishList` asociada a un usuario y un producto.
      *
