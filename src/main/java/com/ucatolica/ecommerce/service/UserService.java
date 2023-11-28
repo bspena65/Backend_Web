@@ -53,12 +53,12 @@ public class UserService {
      * @throws CustomException Si se produce un error durante el registro.
      */
     public ResponseDto signUp(SignupDto signupDto)  throws CustomException {
-        // Check to see if the current email address has already been registered.
+        // Verificar si la dirección de correo electrónico ya ha sido registrada.
         if (Helper.notNull(userRepository.findByEmail(signupDto.getEmail()))) {
-            // If the email address has been registered then throw an exception.
+            // Si la dirección de correo electrónico ya está registrada, lanzar una excepción.
             throw new CustomException("User already exists");
         }
-        // first encrypt the password
+        // Primero encriptar la contraseña
         String encryptedPassword = signupDto.getPassword();
         try {
             encryptedPassword = hashPassword(signupDto.getPassword());
@@ -72,19 +72,18 @@ public class UserService {
 
         User createdUser;
         try {
-            // save the User
+            // Guarda el usuario
             createdUser = userRepository.save(user);
-            // generate token for user
+            // generacion de token para el user
             final AuthenticationToken authenticationToken = new AuthenticationToken(createdUser);
-            // save token in database
+            // guarda token en database
             authenticationService.saveConfirmationToken(authenticationToken);
-            // success in creating
             // Después de crear el usuario, enviar un correo electrónico de bienvenida
             emailService.enviarCorreo(signupDto.getEmail(), "Bienvenido a Ecommerce", "Gracias por registrarte en nuestro sitio.");
-
+            // éxito en la creación
             return new ResponseDto(ResponseStatus.success.toString(), USER_CREATED);
         } catch (Exception e) {
-            // handle signup error
+            // manejar el error de registro
             throw new CustomException(e.getMessage());
         }
     }
@@ -97,15 +96,15 @@ public class UserService {
      * @throws CustomException Si se produce un error durante el inicio de sesión.
      */
     public SignInResponseDto signIn(SignInDto signInDto) throws CustomException {
-        // first find User by email
+        // Primero, buscar al usuario por correo electrónico.
         User user = userRepository.findByEmail(signInDto.getEmail());
         if(!Helper.notNull(user)){
             throw  new AuthenticationFailException("user not present");
         }
         try {
-            // check if password is right
+            // Verificar si la contraseña es correcta.
             if (!user.getPassword().equals(hashPassword(signInDto.getPassword()))){
-                // passowrd doesnot match
+                // Si la contraseña no coincide.
                 throw  new AuthenticationFailException(MessageStrings.WRONG_PASSWORD);
             }
         } catch (NoSuchAlgorithmException e) {
@@ -114,10 +113,11 @@ public class UserService {
             throw new CustomException(e.getMessage());
         }
 
+        // Obtener el token de autenticación para el usuario.
         AuthenticationToken token = authenticationService.getToken(user);
 
         if(!Helper.notNull(token)) {
-            // token not present
+            // Si no se encuentra el token.
             throw new CustomException("token not present");
         }
 
@@ -153,11 +153,15 @@ public class UserService {
      * @throws AuthenticationFailException Si el usuario que realiza la creación no tiene permisos suficientes.
      */
     public ResponseDto createUser(String token, UserCreateDto userCreateDto) throws CustomException, AuthenticationFailException {
+        // Obtener el usuario que realiza la creación a partir del token.
         User creatingUser = authenticationService.getUser(token);
+
+        // Verificar si el usuario tiene permisos para crear un nuevo usuario.
         if (!canCrudUser(creatingUser.getRole())) {
-            // user can't create new user
+            // El usuario no tiene permisos para crear un nuevo usuario.
             throw  new AuthenticationFailException(MessageStrings.USER_NOT_PERMITTED);
         }
+        // Encriptar la contraseña del nuevo usuario.
         String encryptedPassword = userCreateDto.getPassword();
         try {
             encryptedPassword = hashPassword(userCreateDto.getPassword());
@@ -166,15 +170,18 @@ public class UserService {
             logger.error("hashing password failed {}", e.getMessage());
         }
 
+        // Crear el nuevo usuario.
         User user = new User(userCreateDto.getName(), userCreateDto.getLastName(), userCreateDto.getEmail(), userCreateDto.getRole(), encryptedPassword );
         User createdUser;
         try {
+            // Guardar el usuario en la base de datos.
             createdUser = userRepository.save(user);
+            // Crear y guardar el token de autenticación para el nuevo usuario.
             final AuthenticationToken authenticationToken = new AuthenticationToken(createdUser);
             authenticationService.saveConfirmationToken(authenticationToken);
             return new ResponseDto(ResponseStatus.success.toString(), USER_CREATED);
         } catch (Exception e) {
-            // handle user creation fail error
+            // Manejar errores en la creación del usuario.
             throw new CustomException(e.getMessage());
         }
 
@@ -202,14 +209,15 @@ public class UserService {
      */
     boolean canCrudUser(User userUpdating, Integer userIdBeingUpdated) {
         Role role = userUpdating.getRole();
-        // admin and manager can crud any user
+        // Los administradores pueden realizar operaciones CRUD en cualquier usuario.
         if (role == Role.admin) {
             return true;
         }
-        // user can update his own record, but not his role
+        // Un usuario puede actualizar su propio registro, pero no su rol.
         if (role == Role.user && userUpdating.getId() == userIdBeingUpdated) {
             return true;
         }
+        // En cualquier otro caso, no se tienen permisos para realizar operaciones CRUD.
         return false;
     }
 

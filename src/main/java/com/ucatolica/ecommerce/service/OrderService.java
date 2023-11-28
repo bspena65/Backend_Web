@@ -79,9 +79,9 @@ public class OrderService {
      */
     SessionCreateParams.LineItem createSessionLineItem(CheckoutItemDto checkoutItemDto) {
         return SessionCreateParams.LineItem.builder()
-                // set price for each product
+                // establecer precio para cada producto
                 .setPriceData(createPriceData(checkoutItemDto))
-                // set quantity for each product
+                // establecer cantidad para cada producto
                 .setQuantity(Long.parseLong(String.valueOf(checkoutItemDto.getQuantity())))
                 .build();
     }
@@ -95,21 +95,21 @@ public class OrderService {
      */
     public Session createSession(List<CheckoutItemDto> checkoutItemDtoList) throws StripeException {
 
-        // supply success and failure url for stripe
+        // proporcionar URL de éxito y error para stripe
         String successURL = baseURL + "payment/success";
         String failedURL = baseURL + "payment/failed";
 
-        // set the private key
+        // establece la clave privada
         Stripe.apiKey = apiKey;
 
         List<SessionCreateParams.LineItem> sessionItemsList = new ArrayList<>();
 
-        // for each product compute SessionCreateParams.LineItem
+        // para cada producto calcula SessionCreateParams.LineItem
         for (CheckoutItemDto checkoutItemDto : checkoutItemDtoList) {
             sessionItemsList.add(createSessionLineItem(checkoutItemDto));
         }
 
-        // build the session param
+        // construye el parámetro de sesión
         SessionCreateParams params = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
