@@ -6,6 +6,17 @@ package com.ucatolica.ecommerce.dto.user;
 public class SignInResponseDto {
     private String status;
     private String token;
+    private String role;
+
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
 
     /**
      * Obtiene el estado de la respuesta de inicio de sesión.
@@ -48,9 +59,11 @@ public class SignInResponseDto {
      *
      * @param status El estado de la respuesta.
      * @param token  El token de autenticación.
+     *
      */
-    public SignInResponseDto(String status, String token) {
+    public SignInResponseDto(String status, String token, String role) {
         this.status = status;
         this.token = token;
+        this.role = role;
     }
 }
