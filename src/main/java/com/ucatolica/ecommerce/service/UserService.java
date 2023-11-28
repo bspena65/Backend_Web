@@ -38,6 +38,9 @@ public class UserService {
     @Autowired
     AuthenticationService authenticationService;
 
+    @Autowired
+    private EmailService emailService;
+
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
@@ -76,6 +79,9 @@ public class UserService {
             // save token in database
             authenticationService.saveConfirmationToken(authenticationToken);
             // success in creating
+            // Después de crear el usuario, enviar un correo electrónico de bienvenida
+            emailService.enviarCorreo(signupDto.getEmail(), "Bienvenido a Ecommerce", "Gracias por registrarte en nuestro sitio.");
+
             return new ResponseDto(ResponseStatus.success.toString(), USER_CREATED);
         } catch (Exception e) {
             // handle signup error
