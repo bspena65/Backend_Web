@@ -78,6 +78,7 @@ public class OrderService {
      * @return Un objeto LineItem que representa el producto en la sesión de pago de Stripe.
      */
     SessionCreateParams.LineItem createSessionLineItem(CheckoutItemDto checkoutItemDto) {
+
         return SessionCreateParams.LineItem.builder()
                 // establecer precio para cada producto
                 .setPriceData(createPriceData(checkoutItemDto))
